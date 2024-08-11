@@ -1,4 +1,7 @@
+import os
 import pygame
+
+BASE_PATH = os.path.dirname(__file__).replace('code', '')
 
 WIDTH = 1280
 HEIGHT = 720

@@ -13,6 +13,7 @@ class Level:
 
 		self.create_map()
 
+	# noinspection PyTypeChecker
 	def create_map(self):
 		for row_index, row in enumerate(WORLD_MAP):
 			for col_index, col in enumerate(row):

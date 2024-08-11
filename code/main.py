@@ -6,7 +6,7 @@ from level import Level
 class Game:
 	def __init__(self):
 		pygame.init()
-		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
+		self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
 		pygame.display.set_caption('Zelda')
 		self.clock = pygame.time.Clock()
 
