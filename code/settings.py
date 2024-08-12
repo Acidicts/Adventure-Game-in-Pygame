@@ -1,5 +1,6 @@
 import os
 import pygame
+from pygame.math import Vector2
 
 BASE_PATH = os.path.dirname(__file__).replace('code', '')
 
