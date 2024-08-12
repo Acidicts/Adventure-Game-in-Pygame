@@ -5,75 +5,91 @@ from settings import *
 from debug import debug
 from player import Player
 from random import choice
+from weapon import Weapon
 
 
 class Level:
-	def __init__(self):
-		self.display_surface = pygame.display.get_surface()
+    def __init__(self):
+        self.display_surface = pygame.display.get_surface()
 
-		self.visible_sprites = YSortCameraGroup()
-		self.obstacle_sprites = pygame.sprite.Group()
+        self.visible_sprites = YSortCameraGroup()
+        self.obstacle_sprites = pygame.sprite.Group()
 
-		self.player = None
+        self.current_attack = None
 
-		self.create_map()
+        self.player = None
 
-	# noinspection PyTypeChecker
-	def create_map(self):
-		layouts = {
-			'boundary': import_csv_layout(BASE_PATH + 'map/map_FloorBlocks.csv'),
-			'grass': import_csv_layout(BASE_PATH + 'map/map_Grass.csv'),
-			'object': import_csv_layout(BASE_PATH + 'map/map_LargeObjects.csv')
-		}
+        self.create_map()
 
-		graphics = {
-			'grass': import_folder(BASE_PATH + 'graphics/Grass/'),
-			'objects': import_folder(BASE_PATH + 'graphics/Objects/')
-		}
+    # noinspection PyTypeChecker
+    def create_map(self):
+        layouts = {
+            'boundary': import_csv_layout(BASE_PATH + 'map/map_FloorBlocks.csv'),
+            'grass': import_csv_layout(BASE_PATH + 'map/map_Grass.csv'),
+            'object': import_csv_layout(BASE_PATH + 'map/map_LargeObjects.csv')
+        }
 
-		for style, layout in layouts.items():
-			for row_index, row in enumerate(layout):
-				for col_index, col in enumerate(row):
-					if col != '-1':
-						x = col_index * TILESIZE
-						y = row_index * TILESIZE
+        graphics = {
+            'grass': import_folder(BASE_PATH + 'graphics/Grass/'),
+            'objects': import_folder(BASE_PATH + 'graphics/Objects/')
+        }
 
-						if style == 'boundary':
-							Tile((x, y), [self.obstacle_sprites], 'invisible')
-						if style == 'grass':
-							random_grass_img = choice(graphics['grass'])
-							Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'graass', random_grass_img)
-						if style == 'object':
-							surf = graphics['objects'][int(col)]
-							Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'object', surf)
+        for style, layout in layouts.items():
+            for row_index, row in enumerate(layout):
+                for col_index, col in enumerate(row):
+                    if col != '-1':
+                        x = col_index * TILESIZE
+                        y = row_index * TILESIZE
 
-		self.player = Player((2000, 1430), [self.visible_sprites], self.obstacle_sprites)
+                        if style == 'boundary':
+                            Tile((x, y), [self.obstacle_sprites], 'invisible')
+                        if style == 'grass':
+                            random_grass_img = choice(graphics['grass'])
+                            Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'graass', random_grass_img)
+                        if style == 'object':
+                            surf = graphics['objects'][int(col)]
+                            Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'object', surf)
 
-	def run(self):
-		self.visible_sprites.custom_draw(self.player)
-		self.visible_sprites.update()
-		debug(self.player.status, 10, 10)
+        self.player = Player((2000, 1430),
+                             [self.visible_sprites],
+                             self.obstacle_sprites,
+                             self.create_attack,
+                             self.destroy_attack)
+
+    def create_attack(self):
+        # noinspection PyTypeChecker
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+            self.current_attack = None
+
+    def run(self):
+        self.visible_sprites.custom_draw(self.player)
+        self.visible_sprites.update()
+        debug(self.player.status, 10, 10)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
-	def __init__(self):
-		super().__init__()
+    def __init__(self):
+        super().__init__()
 
-		self.display_Surface = pygame.display.get_surface()
+        self.display_Surface = pygame.display.get_surface()
 
-		self.half_width = self.display_Surface.get_width() / 2
-		self.half_height = self.display_Surface.get_height() / 2
-		self.offset = Vector2(0, 0)
+        self.half_width = self.display_Surface.get_width() / 2
+        self.half_height = self.display_Surface.get_height() / 2
+        self.offset = Vector2(0, 0)
 
-		self.floor_surf = pygame.image.load(BASE_PATH + 'graphics/tilemap/ground.png').convert()
-		self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
+        self.floor_surf = pygame.image.load(BASE_PATH + 'graphics/tilemap/ground.png').convert()
+        self.floor_rect = self.floor_surf.get_rect(topleft=(0, 0))
 
-	def custom_draw(self, player):
-		self.offset.x = -player.rect.centerx + self.half_width
-		self.offset.y = -player.rect.centery + self.half_height
+    def custom_draw(self, player):
+        self.offset.x = -player.rect.centerx + self.half_width
+        self.offset.y = -player.rect.centery + self.half_height
 
-		self.display_Surface.blit(self.floor_surf, self.offset + self.floor_rect.topleft)
+        self.display_Surface.blit(self.floor_surf, self.offset + self.floor_rect.topleft)
 
-		for sprite in sorted(self.sprites(), key=lambda sprit: sprit.rect.centery):
-			offset_pos = sprite.rect.topleft + self.offset
-			self.display_Surface.blit(sprite.image, offset_pos)
+        for sprite in sorted(self.sprites(), key=lambda sprit: sprit.rect.centery):
+            offset_pos = sprite.rect.topleft + self.offset
+            self.display_Surface.blit(sprite.image, offset_pos)
