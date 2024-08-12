@@ -1,5 +1,6 @@
 import pygame.sprite
 
+from ui import UI
 from tile import Tile
 from settings import *
 from debug import debug
@@ -20,6 +21,8 @@ class Level:
         self.player = None
 
         self.create_map()
+
+        self.ui = UI()
 
     # noinspection PyTypeChecker
     def create_map(self):
@@ -68,7 +71,7 @@ class Level:
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
-        debug(self.player.status, 10, 10)
+        self.ui.display(self.player)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
