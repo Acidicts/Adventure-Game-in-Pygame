@@ -12,7 +12,7 @@ class Tile(pygame.sprite.Sprite):
 		self.image = surf if surf else pygame.surface.Surface((TILESIZE, TILESIZE))
 
 		if sprite_type == 'object':
-			self.rect = self.image.get_rect(topleft(pos[0], pos[1] - TILESIZE))
+			self.rect = self.image.get_rect(topleft=(pos[0], pos[1] - TILESIZE))
 		else:
 			self.rect = self.image.get_rect(topleft=pos)
 
