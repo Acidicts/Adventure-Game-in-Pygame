@@ -1,7 +1,7 @@
 import pygame
 from pygame import Vector2
 
-from settings import *
+from .settings import *
 
 
 class Player(pygame.sprite.Sprite):

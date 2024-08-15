@@ -1,6 +1,6 @@
 import pygame.font
 
-from settings import *
+from .settings import *
 
 
 class UI:

@@ -1,4 +1,4 @@
-from settings import *
+from .settings import *
 
 
 class Weapon(pygame.sprite.Sprite):

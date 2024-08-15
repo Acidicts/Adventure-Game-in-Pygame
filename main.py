@@ -1,6 +1,8 @@
 import sys
-from settings import *
-from level import Level
+import pygbag
+import asyncio
+from code.settings import *
+from code.level import Level
 
 
 class Game:
@@ -11,8 +13,8 @@ class Game:
 		self.clock = pygame.time.Clock()
 
 		self.level = Level()
-	
-	def run(self):
+
+	async def run(self):
 		while True:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -24,7 +26,9 @@ class Game:
 			pygame.display.update()
 			self.clock.tick(FPS)
 
+			await asyncio.sleep(0)
+
 
 if __name__ == '__main__':
 	game = Game()
-	game.run()
+	asyncio.run(game.run())

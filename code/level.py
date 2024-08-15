@@ -1,12 +1,12 @@
 import pygame.sprite
 
-from ui import UI
-from tile import Tile
-from settings import *
-from debug import debug
-from player import Player
+from .ui import UI
+from .tile import Tile
+from .settings import *
+from .debug import debug
+from .player import Player
 from random import choice
-from weapon import Weapon
+from .weapon import Weapon
 
 
 class Level:
